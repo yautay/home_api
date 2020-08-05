@@ -4,23 +4,29 @@ from flask_restful import Api, Resource
 app = Flask(__name__)
 api = Api(app)
 
-relayDB = [
-    {
-        "name": "dzbaneczniki",
-        "properties": {
-                "timestamp": "2020-12-12 23:21",
-                "power": True
-        }
-    }
-]
+relays = []
 
 
-class Relay(Resource):
+class Relays(Resource):
     def get(self, name):
-        return {"relay": name}
+        for relay in range(len(relays)):
+            print(relay)
+            if name == relays[relay]["relay"]:
+                return relays[relay]
+        return {"relay": None}, 404
+
+    def post(self, name):
+        relay = {"relay": name,
+                 "time": "546566",
+                 "power": False
+                 }
+        relays.append(relay)
+        return relay, 201
+
+    def put(self, name):
+        pass
 
 
-api.add_resource(Relay, "/relay/<string:name>")
-
+api.add_resource(Relays, "/relay/<string:name>")
 
 app.run()
