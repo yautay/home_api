@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, request
 from flask_restful import Api, Resource
 
 app = Flask(__name__)
@@ -7,7 +7,7 @@ api = Api(app)
 relays = []
 
 
-class Relays(Resource):
+class Relay(Resource):
     def get(self, name):
         for relay in range(len(relays)):
             print(relay)
@@ -16,9 +16,10 @@ class Relays(Resource):
         return {"relay": None}, 404
 
     def post(self, name):
+        data = request.get_json()
         relay = {"relay": name,
-                 "time": "546566",
-                 "power": False
+                 "time": data["timestamp"],
+                 "power": data["power"]
                  }
         relays.append(relay)
         return relay, 201
@@ -27,6 +28,15 @@ class Relays(Resource):
         pass
 
 
-api.add_resource(Relays, "/relay/<string:name>")
+api.add_resource(Relay, "/relay/<string:name>")
 
-app.run()
+
+class RelayList(Resource):
+    def get(self):
+        return {"relays": relays}
+
+
+api.add_resource(RelayList, "/relays")
+
+
+app.run(port=5000, debug=True)
