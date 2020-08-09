@@ -2,6 +2,7 @@ from flask import Flask, request
 from flask_restful import Api, Resource
 
 app = Flask(__name__)
+app.secret_key = "dupa"
 api = Api(app)
 
 relays = []
@@ -9,13 +10,13 @@ relays = []
 
 class Relay(Resource):
     def get(self, name):
-        for relay in range(len(relays)):
-            print(relay)
-            if name == relays[relay]["relay"]:
-                return relays[relay]
-        return {"relay": None}, 404
+        relay = next(filter(lambda x: x["relay"] == name, relays), None)
+        return {"relay": None}, 200 if relay else 404
 
     def post(self, name):
+        if next(filter(lambda x: x["relay"] == name, relays), None):
+            return {"message": "An relay with name '{}' already exists.".format(name)}, 400
+
         data = request.get_json()
         relay = {"relay": name,
                  "time": data["timestamp"],
@@ -23,6 +24,7 @@ class Relay(Resource):
                  }
         relays.append(relay)
         return relay, 201
+
 
     def put(self, name):
         pass
