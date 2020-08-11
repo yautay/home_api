@@ -1,17 +1,23 @@
 from flask import Flask, request
 from flask_restful import Api, Resource
+from flask_jwt import JWT, jwt_required
+
+from security import identity, authenticate
 
 app = Flask(__name__)
 app.secret_key = "dupa"
 api = Api(app)
 
+jwt = JWT(app, authenticate, identity) #/auth
+
 relays = []
 
 
 class Relay(Resource):
+    @jwt_required()
     def get(self, name):
         relay = next(filter(lambda x: x["relay"] == name, relays), None)
-        return {"relay": None}, 200 if relay else 404
+        return {"relay": relay}, 200 if relay else 404
 
     def post(self, name):
         if next(filter(lambda x: x["relay"] == name, relays), None):
@@ -41,4 +47,4 @@ class RelayList(Resource):
 api.add_resource(RelayList, "/relays")
 
 
-app.run(port=5000, debug=True)
+app.run(port=5000, debug=False)
