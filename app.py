@@ -14,16 +14,28 @@ relays = []
 
 
 class Relay(Resource):
-   # @jwt_required()
+    parser = reqparse.RequestParser()
+    parser.add_argument("power",
+                        type=bool,
+                        required=True,
+                        help="This can not be blank!"
+                        )
+    parser.add_argument("timestamp",
+                        type=str,
+                        required=True,
+                        help="Needs time!")
+
+    @jwt_required()
     def get(self, name):
         relay = next(filter(lambda x: x["relay"] == name, relays), None)
         return {"relay": relay}, 200 if relay else 404
 
+    @jwt_required()
     def post(self, name):
         if next(filter(lambda x: x["relay"] == name, relays), None):
             return {"message": "An relay with name '{}' already exists.".format(name)}, 400
 
-        data = request.get_json()
+        data = self.parser.parse_args()
         relay = {"relay": name,
                  "time": data["timestamp"],
                  "power": data["power"]
@@ -31,19 +43,10 @@ class Relay(Resource):
         relays.append(relay)
         return relay, 201
 
+    @jwt_required()
     def put(self, name):
-        parser = reqparse.RequestParser()
-        parser.add_argument("power",
-                            type=bool,
-                            required=True,
-                            help="This can not be blank!"
-                            )
-        parser.add_argument("timestamp",
-                            type=str,
-                            required=True,
-                            help="Needs time!")
-        data = parser.parse_args()
         relay = next(filter(lambda x: x["relay"] == name, relays), None)
+        data = self.parser.parse_args()
         if relay is None:
             relay = {"relay": name,
                      "time": data["timestamp"],
@@ -54,6 +57,7 @@ class Relay(Resource):
             relay.update(data)
         return relay
 
+    @jwt_required()
     def delete(self, name):
         global relays
         relays = list(filter(lambda x: x["relay"] != name, relays))
