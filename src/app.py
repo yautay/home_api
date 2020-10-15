@@ -3,7 +3,7 @@ from flask_restful import Api, Resource, reqparse
 from flask_jwt import JWT, jwt_required
 
 from src.security import identity, authenticate
-from .user import UserRegister
+from src.user import UserRegister
 
 app = Flask(__name__)
 app.secret_key = "kim.home"
