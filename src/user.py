@@ -13,7 +13,7 @@ class User:
         connection = sqlite3.connect("data.db")
         cursor = connection.cursor()
 
-        query = "SELECT * FROM users WHERE usename=?"
+        query = "SELECT * FROM users WHERE username=?"
         result = cursor.execute(query, (username,))
         row = result.fetchone()
         if row:
@@ -29,7 +29,7 @@ class User:
         connection = sqlite3.connect("data.db")
         cursor = connection.cursor()
 
-        query = "SELECT * FROM users WHERE _id=?"
+        query = "SELECT * FROM users WHERE id=?"
         result = cursor.execute(query, (_id,))
         row = result.fetchone()
         if row:
@@ -57,13 +57,13 @@ class UserRegister(Resource):
     @classmethod
     def post(cls):
         data = cls.parser.parse_args()
-        connection = sqlite3.connect("data.db")
-        cursor = connection.cursor()
-
-        query = 'INSERT INTO users VALUES (NUL, ?, ?)'
-        cursor.execute(query, (data["username"], data["password"],))
-
-        connection.commit()
-        connection.close()
-
+        if User.find_by_username(data["username"]) is None:
+            connection = sqlite3.connect("data.db")
+            cursor = connection.cursor()
+            query = "INSERT INTO users VALUES (NULL, ?, ?)"
+            cursor.execute(query, (data["username"], data["password"]))
+            connection.commit()
+            connection.close()
+        else:
+            return {"message": "User with that name already exists"}, 400
         return {"message": "User created successfully"}, 201
