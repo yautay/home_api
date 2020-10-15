@@ -2,8 +2,8 @@ from werkzeug.security import safe_str_cmp
 from user import User
 
 users = [
-    User(1, "kasia", "Test123!@#"),
-    User(2, "michal", "Test123")
+    User(1, "yautay", "Tereska15@"),
+    User(2, "client", "Maksymilian15@")
 ]
 
 username_mapping = {u.username: u for u in users}

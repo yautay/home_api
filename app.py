@@ -5,7 +5,7 @@ from flask_jwt import JWT, jwt_required
 from security import identity, authenticate
 
 app = Flask(__name__)
-app.secret_key = "dupa"
+app.secret_key = "kim.home"
 api = Api(app)
 
 jwt = JWT(app, authenticate, identity) #/auth
