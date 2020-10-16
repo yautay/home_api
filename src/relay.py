@@ -123,4 +123,15 @@ class Relay(Resource):
 
 class RelayList(Resource):
     def get(self):
-        return {"relays": relays}
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+
+        query = "SELECT * FROM relays"
+        result = cursor.execute(query)
+        relays = []
+        for row in result:
+            relays.append({"id": row[0], "name": row[1], "state": row[2], "timestamp": row[3]})
+        connection.commit()
+        connection.close()
+        return relays
+
