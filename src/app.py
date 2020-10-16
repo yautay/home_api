@@ -16,4 +16,5 @@ api.add_resource(Relay, "/relay/<string:name>")
 api.add_resource(RelayList, "/relays")
 api.add_resource(UserRegister, '/register')
 
-app.run(port=5000, debug=False)
+if __name__ == '__main__':
+    app.run(port=5000, debug=False)

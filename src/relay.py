@@ -19,8 +19,8 @@ class Relay(Resource):
                         required=True,
                         help="Needs time!")
 
-    @jwt_required()
-    def get(self, name):
+    @classmethod
+    def find_by_name(cls, name):
         connection = sqlite3.connect("data.db")
         cursor = connection.cursor()
 
@@ -30,20 +30,34 @@ class Relay(Resource):
 
         if row:
             return {"relay": {"id": row[0], "name": row[1], "state": row[2], "timestamp": row[3]}}
+
+    @jwt_required()
+    def get(self, name):
+        relay = self.find_by_name(name)
+        if relay:
+            return relay
         else:
             return {"message": "Item not found"}, 404
 
     @jwt_required()
     def post(self, name):
-        if next(filter(lambda x: x["name"] == name, relays), None):
+        if self.find_by_name(name):
             return {"message": "An relay with name '{}' already exists.".format(name)}, 400
 
         data = self.parser.parse_args()
         relay = {"name": name,
-                 "time": data["timestamp"],
-                 "state": data["power"]
+                 "state": data["state"],
+                 "timestamp": data["timestamp"]
                  }
-        relays.append(relay)
+
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+
+        query = "INSERT INTO relays VALUES (NULL , ?, ?, ?)"
+        cursor.execute(query, (relay["name"], relay["state"], relay["timestamp"],))
+        connection.commit()
+        connection.close()
+
         return relay, 201
 
     @jwt_required()
