@@ -31,6 +31,16 @@ class Relay(Resource):
         if row:
             return {"relay": {"id": row[0], "name": row[1], "state": row[2], "timestamp": row[3]}}
 
+    @classmethod
+    def insert(cls, relay):
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+
+        query = "INSERT INTO relays VALUES (NULL , ?, ?, ?)"
+        cursor.execute(query, (relay["name"], relay["state"], relay["timestamp"],))
+        connection.commit()
+        connection.close()
+
     @jwt_required()
     def get(self, name):
         relay = self.find_by_name(name)
@@ -49,14 +59,10 @@ class Relay(Resource):
                  "state": data["state"],
                  "timestamp": data["timestamp"]
                  }
-
-        connection = sqlite3.connect('data.db')
-        cursor = connection.cursor()
-
-        query = "INSERT INTO relays VALUES (NULL , ?, ?, ?)"
-        cursor.execute(query, (relay["name"], relay["state"], relay["timestamp"],))
-        connection.commit()
-        connection.close()
+        try:
+            self.insert(relay)
+        except:
+            return {"message": "An error occurred inserting the item"}, 500
 
         return relay, 201
 
@@ -76,8 +82,16 @@ class Relay(Resource):
 
     @jwt_required()
     def delete(self, name):
-        global relays
-        relays = list(filter(lambda x: x["name"] != name, relays))
+        if not self.find_by_name(name):
+            return {"message": "An relay with name '{}' does not exists.".format(name)}, 404
+
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+
+        query = "DELETE FROM relays WHERE name =?"
+        cursor.execute(query, (name,))
+        connection.commit()
+        connection.close()
         return {"message": "Relay deleted"}
 
 
