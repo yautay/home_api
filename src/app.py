@@ -3,8 +3,8 @@ from flask_restful import Api
 from flask_jwt import JWT
 
 from security import identity, authenticate
-from user import UserRegister
-from relay import Relay, RelayList
+from resources.user import UserRegister
+from resources.relay import Relay, RelayList
 
 app = Flask(__name__)
 app.secret_key = "kim.home"
