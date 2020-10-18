@@ -1,7 +1,15 @@
 import sqlite3
+from db import db
 
 
-class RelayModel:
+class RelayModel(db.Model):
+    __tablename__ = "relays"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80))
+    state = db.Column(db.Boolean)
+    timestamp = db.Column(db.Time)
+
     def __init__(self, _id, name, state, timestamp):
         self.id = _id
         self.name = name
