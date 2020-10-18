@@ -19,6 +19,7 @@ class Relay(Resource):
     @jwt_required()
     def get(self, name):
         try:
+            print("ddd")
             relay = RelayModel.find_by_name(name)
         except:
             return {"message": "An error occurred searching for item"}, 500
@@ -38,8 +39,7 @@ class Relay(Resource):
         data = self.parser.parse_args()
         relay = RelayModel(_id=None, name=name, state=data["state"], timestamp=data["timestamp"])
         try:
-            relay.insert()
-            relay = RelayModel.find_by_name(relay.name)
+            relay.save_to_db()
         except:
             return {"message": "An error occurred inserting the item"}, 500
 
@@ -48,42 +48,40 @@ class Relay(Resource):
     @jwt_required()
     def put(self, name):
         data = self.parser.parse_args()
-        updated_relay = RelayModel(_id=None, name=name, state=data["state"], timestamp=data["timestamp"])
+
         try:
             relay = RelayModel.find_by_name(name)
         except:
             return {"message": "An error occurred searching for item"}, 500
 
         if relay is None:
-            try:
-                updated_relay.insert()
-            except:
-                return {"message": "An error occurred inserting the item"}, 500
+            relay = RelayModel(_id=None, name=name, state=data["state"], timestamp=data["timestamp"])
         else:
-            try:
-                updated_relay.update()
-            except:
-                return {"message": "An error occurred updating the item"}, 500
+            relay.state = data["state"]
+            relay.timestamp = data["timestamp"]
 
-        updated_relay = RelayModel.find_by_name(updated_relay.name)
-        return updated_relay.json()
+        try:
+            relay.save_to_db()
+        except:
+            return {"message": "An error occurred updating the item"}, 500
+
+        return relay.json()
 
     @jwt_required()
     def delete(self, name):
         try:
-            if not RelayModel.find_by_name(name):
-                return {"message": "An relay with name '{}' does not exists.".format(name)}, 404
+            relay = RelayModel.find_by_name(name)
         except:
             return {"message": "An error occurred searching for item"}, 500
+        if relay is not None:
+            try:
+                relay.delete_from_db()
+                return {"message": "Relay deleted"}
+            except:
+                return {"message": "An error occurred deleting item"}, 500
+        else:
+            return {"message": "An relay with name '{}' does not exists.".format(name)}, 404
 
-        connection = sqlite3.connect('data.db')
-        cursor = connection.cursor()
-
-        query = "DELETE FROM relays WHERE name =?"
-        cursor.execute(query, (name,))
-        connection.commit()
-        connection.close()
-        return {"message": "Relay deleted"}
 
 
 class RelayList(Resource):

@@ -8,6 +8,7 @@ from resources.user import UserRegister
 from resources.relay import Relay, RelayList
 
 app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = "kim.home"
 api = Api(app)

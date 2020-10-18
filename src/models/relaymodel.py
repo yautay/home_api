@@ -7,8 +7,8 @@ class RelayModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
-    state = db.Column(db.Boolean)
-    timestamp = db.Column(db.Time)
+    state = db.Column(db.String)
+    timestamp = db.Column(db.String)
 
     def __init__(self, _id, name, state, timestamp):
         self.id = _id
@@ -27,30 +27,12 @@ class RelayModel(db.Model):
 
     @classmethod
     def find_by_name(cls, name):
-        connection = sqlite3.connect("data.db")
-        cursor = connection.cursor()
+        return cls.query.filter_by(name=name).first()
 
-        query = "SELECT * FROM relays WHERE name=?"
-        result = cursor.execute(query, (name,))
-        row = result.fetchone()
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
 
-        if row:
-            return cls(row[0], row[1], row[2], row[3])
-
-    def insert(self):
-        connection = sqlite3.connect('data.db')
-        cursor = connection.cursor()
-
-        query = "INSERT INTO relays VALUES (NULL , ?, ?, ?)"
-        cursor.execute(query, (self.name, self.state, self.timestamp,))
-        connection.commit()
-        connection.close()
-
-    def update(self):
-        connection = sqlite3.connect('data.db')
-        cursor = connection.cursor()
-
-        query = "UPDATE relays SET state=?, timestamp=? WHERE name=?"
-        cursor.execute(query, (self.state, self.timestamp, self.name))
-        connection.commit()
-        connection.close()
+    def delete_from_db(self):
+        db.session.delete(self)
+        db.session.commit()

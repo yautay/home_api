@@ -19,9 +19,19 @@ class UserRegister(Resource):
     @classmethod
     def post(cls):
         data = cls.parser.parse_args()
-        if UserModel.find_by_username(data["username"]) is None:
-            new_user = UserModel(_id=None, username=data["username"], password=data["password"])
-            new_user.insert()
+        try:
+            user = UserModel.find_by_username(data["username"])
+        except:
+            return {"message": "An error occurred searching for user"}, 500
+
+        if user is not None:
+            return {"message": "An user with name '{}' already exists.".format(data["username"])}, 400
         else:
-            return {"message": "User with that name already exists"}, 400
-        return {"message": "User created successfully"}, 201
+            user = UserModel(None, data["username"], data["password"])
+            try:
+                user.save_to_db()
+                return {"message": "User created successfully"}, 201
+            except:
+                return {"message": "An error occurred inserting user"}, 500
+
+    #TODO -> usunięcie usera w met. del
