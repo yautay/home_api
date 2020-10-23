@@ -24,14 +24,14 @@ class UserRegister(Resource):
         except:
             return {"message": "An error occurred searching for user"}, 500
 
-        if user is not None:
+        if user:
             return {"message": "An user with name '{}' already exists.".format(data["username"])}, 400
         else:
-            user = UserModel(None, data["username"], data["password"])
+            user = UserModel(**data)
             try:
                 user.save_to_db()
                 return {"message": "User created successfully"}, 201
             except:
                 return {"message": "An error occurred inserting user"}, 500
 
-    #TODO -> usunięcie usera w met. del
+

@@ -37,7 +37,7 @@ class Relay(Resource):
             return {"message": "An error occurred searching for item"}, 500
 
         data = self.parser.parse_args()
-        relay = RelayModel(_id=None, name=name, state=data["state"], timestamp=data["timestamp"])
+        relay = RelayModel(name=name, **data)
         try:
             relay.save_to_db()
         except:
@@ -55,7 +55,7 @@ class Relay(Resource):
             return {"message": "An error occurred searching for item"}, 500
 
         if relay is None:
-            relay = RelayModel(_id=None, name=name, state=data["state"], timestamp=data["timestamp"])
+            relay = RelayModel(name=name, **data)
         else:
             relay.state = data["state"]
             relay.timestamp = data["timestamp"]

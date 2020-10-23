@@ -10,15 +10,13 @@ class RelayModel(db.Model):
     state = db.Column(db.String)
     timestamp = db.Column(db.String)
 
-    def __init__(self, _id, name, state, timestamp):
-        self.id = _id
+    def __init__(self, name, state, timestamp):
         self.name = name
         self.state = state
         self.timestamp = timestamp
 
     def json(self):
         json = {
-            "id": self.id,
             "name": self.name,
             "state": self.state,
             "timestamp": self.timestamp
