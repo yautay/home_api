@@ -1,4 +1,3 @@
-import sqlite3
 from flask_jwt import jwt_required
 from flask_restful import Resource, reqparse
 from models.relaymodel import RelayModel
@@ -83,18 +82,7 @@ class Relay(Resource):
             return {"message": "An relay with name '{}' does not exists.".format(name)}, 404
 
 
-
 class RelayList(Resource):
     def get(self):
-        connection = sqlite3.connect('data.db')
-        cursor = connection.cursor()
-
-        query = "SELECT * FROM relays"
-        result = cursor.execute(query)
-        relays = []
-        for row in result:
-            relays.append({"id": row[0], "name": row[1], "state": row[2], "timestamp": row[3]})
-        connection.commit()
-        connection.close()
-        return relays
-
+        return {"relays": [relay.json() for relay in RelayModel.query.all()]}
+        # return {"relays": list(map(lambda x: x.json, RelayModel.query.all()))}
