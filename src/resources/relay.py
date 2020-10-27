@@ -83,6 +83,8 @@ class Relay(Resource):
 
 
 class RelayList(Resource):
+
+    @jwt_required()
     def get(self):
         return {"relays": [relay.json() for relay in RelayModel.query.all()]}
         # return {"relays": list(map(lambda x: x.json, RelayModel.query.all()))}
