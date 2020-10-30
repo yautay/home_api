@@ -1,28 +1,21 @@
 from db import db
 
 
-class RelayModel(db.Model):
-    __tablename__ = "relays"
+class LocalizationModel(db.Model):
+    __tablename__ = "localization"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
-    state = db.Column(db.String)
-    timestamp = db.Column(db.String)
 
-    localization_id = db.Column(db.Integer, db.ForeignKey("localization.id"))
-    localization = db.relationship("LocalizationModel")
+    relays = db.relationship("RelayModel", lazy="dynamic")
 
-    def __init__(self, name, state, timestamp, localization_id):
+    def __init__(self, name,):
         self.name = name
-        self.state = state
-        self.timestamp = timestamp
-        self.localization_id = localization_id
 
     def json(self):
         json = {
             "name": self.name,
-            "state": self.state,
-            "timestamp": self.timestamp
+            "relays": [relay.json() for relay in self.relays.all()]
         }
         return json
 

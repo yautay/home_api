@@ -6,6 +6,7 @@ from db import db
 from security import identity, authenticate
 from resources.user import UserRegister
 from resources.relay import Relay, RelayList
+from resources.localization import Localization, LocalizationList
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
@@ -22,6 +23,8 @@ jwt = JWT(app, authenticate, identity) #/auth
 api.add_resource(Relay, "/relay/<string:name>")
 api.add_resource(RelayList, "/relays")
 api.add_resource(UserRegister, '/register')
+api.add_resource(Localization, "/localization/<string:name>")
+api.add_resource(LocalizationList, "/localizations")
 
 if __name__ == '__main__':
     db.init_app(app)

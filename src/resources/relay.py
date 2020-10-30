@@ -14,6 +14,10 @@ class Relay(Resource):
                         type=str,
                         required=True,
                         help="Needs time!")
+    parser.add_argument("localization_id",
+                        type=int,
+                        required=True,
+                        help="Every relay needs localization id.")
 
     @jwt_required()
     def get(self, name):
@@ -58,6 +62,7 @@ class Relay(Resource):
         else:
             relay.state = data["state"]
             relay.timestamp = data["timestamp"]
+            relay.localization_id = data["localization_id"]
 
         try:
             relay.save_to_db()
