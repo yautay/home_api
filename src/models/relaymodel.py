@@ -7,7 +7,7 @@ class RelayModel(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
-    state = db.Column(db.String)
+    state = db.Column(db.Boolean)
     timestamp = db.Column(db.TIMESTAMP)
 
     localization_id = db.Column(db.Integer, db.ForeignKey("localization.id"))
