@@ -1,4 +1,5 @@
 from db import db
+from datetime import datetime
 
 
 class RelayModel(db.Model):
@@ -7,22 +8,22 @@ class RelayModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     state = db.Column(db.String)
-    timestamp = db.Column(db.String)
+    timestamp = db.Column(db.TIMESTAMP)
 
     localization_id = db.Column(db.Integer, db.ForeignKey("localization.id"))
     localization = db.relationship("LocalizationModel")
 
-    def __init__(self, name, state, timestamp, localization_id):
+    def __init__(self, name, state, localization_id):
         self.name = name
         self.state = state
-        self.timestamp = timestamp
+        self.timestamp = datetime.now()
         self.localization_id = localization_id
 
     def json(self):
         json = {
             "name": self.name,
             "state": self.state,
-            "timestamp": self.timestamp
+            "timestamp": str(self.timestamp)
         }
         return json
 

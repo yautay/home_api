@@ -1,6 +1,7 @@
 from flask_jwt import jwt_required
 from flask_restful import Resource, reqparse
 from models.relaymodel import RelayModel
+from datetime import datetime
 
 
 class Relay(Resource):
@@ -10,10 +11,6 @@ class Relay(Resource):
                         required=True,
                         help="This can not be blank!"
                         )
-    parser.add_argument("timestamp",
-                        type=str,
-                        required=True,
-                        help="Needs time!")
     parser.add_argument("localization_id",
                         type=int,
                         required=True,
@@ -61,9 +58,7 @@ class Relay(Resource):
             relay = RelayModel(name=name, **data)
         else:
             relay.state = data["state"]
-            relay.timestamp = data["timestamp"]
-            relay.localization_id = data["localization_id"]
-
+            relay.timestamp = datetime.now()
         try:
             relay.save_to_db()
         except:

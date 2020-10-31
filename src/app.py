@@ -9,7 +9,7 @@ from resources.relay import Relay, RelayList
 from resources.localization import Localization, LocalizationList
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://rest_api:test1q2w3e@192.168.1.4/kim_home"
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://rest_api:Maksymilian15@192.168.1.4/kim_home"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = "kim.home"
 api = Api(app)
