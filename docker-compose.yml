@@ -1,0 +1,19 @@
+version: "3.7"
+
+services:
+  mock-api:
+    container_name: mock-api
+    environment:
+      - "TZ=Europe/Warsaw"
+    build: .
+    ports:
+      - "5001:5001"
+      - "9199:9199"
+    restart: always
+    networks:
+      - mock-net
+
+networks:
+  mock-net:
+
+

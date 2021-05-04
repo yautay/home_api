@@ -11,4 +11,4 @@ api.add_resource(P24pass, "/p24mock/true")
 api.add_resource(P24wait, "/p24mock/false")
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=False)
+    app.run(port=5001)
