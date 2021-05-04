@@ -4,6 +4,9 @@ from resources.p24pass import P24pass
 from resources.p24wait import P24wait
 
 app = Flask(__name__)
+app.config["DEBUG"] = False
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config['PROPAGATE_EXCEPTIONS'] = True
 app.secret_key = "1q2w3e"
 api = Api(app)
 
